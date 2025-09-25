@@ -1,35 +1,30 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
-import numpy as np
 
 def draw_plot():
     # Read data from file
-    df = pd.read_csv('epa-sea-level.csv')
-
+    df = pd.read_csv("epa-sea-level.csv")
+    df.head(20)
+    
+    years = range(1880, 2051)
     # Create scatter plot
-    plt.scatter(df['Year'], df['CSIRO Adjusted Sea Level'])
-
+    fig = plt.figure(figsize=(8,8))
+    plt.scatter(x=df["Year"], y=df["CSIRO Adjusted Sea Level"], marker="o", edgecolors="k")
     # Create first line of best fit
-    lineA = linregress(df['Year'], df['CSIRO Adjusted Sea Level'])
-    xA = np.arange(df['Year'].min(),2050,1)
-    yA = xA*lineA.slope + lineA.intercept
-
-    plt.plot(xA,yA)
-
+    fit1 = linregress(x=df["Year"], y=df["CSIRO Adjusted Sea Level"])
+    years_recent = range(2000, 2051)
+    plt.plot(years, fit1.slope*years + fit1.intercept, label="first fit")
     # Create second line of best fit
-    df_2000 = df[df['Year'] >= 2000]
-
-    lineB = linregress(df_2000['Year'], df_2000['CSIRO Adjusted Sea Level'])
-    xB = np.arange(2000,2050,1)
-    yB = xB*lineB.slope + lineB.intercept
-
-    plt.plot(xB,yB)
-
+    fit2 = linregress(x=df[df["Year"] >= 2000]["Year"], y=df[df["Year"] >= 2000]["CSIRO Adjusted Sea Level"])
+    plt.plot(years_recent, fit2.slope*years_recent + fit2.intercept, label="second fit")
+    
+    
+    
     # Add labels and title
-    plt.xlabel('Year')
-    plt.ylabel('Sea Level (inches)')
-    plt.title('Rise in Sea Level')
+    plt.xlabel("Year")
+    plt.ylabel("Sea Level (inches)")
+    plt.title("Rise in Sea Level")
     
     # Save plot and return data for testing (DO NOT MODIFY)
     plt.savefig('sea_level_plot.png')
